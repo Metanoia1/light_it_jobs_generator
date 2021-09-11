@@ -135,6 +135,16 @@ class PositionSkill(LevelAbstractModel):
 
 
 class TimeSheet(models.Model):
+    STATUS_PENDING = "PENDING"
+    STATUS_ACCEPTED = "ACCEPTED"
+    STATUS_DECLINED = "DECLINED"
+    STATUS_CHANGED = "CHANGED"
+    STATUSES = (
+        (STATUS_PENDING, "pending"),
+        (STATUS_ACCEPTED, "accepted"),
+        (STATUS_DECLINED, "declined"),
+        (STATUS_CHANGED, "changed"),
+    )
     working_day = models.DateField()
     work_start = models.TimeField()
     work_end = models.TimeField()
@@ -142,6 +152,9 @@ class TimeSheet(models.Model):
     break_end = models.TimeField()
     worker = models.ForeignKey(
         Worker, on_delete=models.CASCADE, related_name="timesheets"
+    )
+    status = models.CharField(
+        choices=STATUSES, default=STATUS_PENDING, max_length=50
     )
 
     def __str__(self):
