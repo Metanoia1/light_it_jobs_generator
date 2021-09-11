@@ -95,6 +95,8 @@ class Offer(models.Model):
 
 class Skill(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    rate = models.DecimalField(max_digits=5, decimal_places=2)
+    level_rate = models.DecimalField(max_digits=5, decimal_places=2)
 
     def __str__(self):
         return self.name
