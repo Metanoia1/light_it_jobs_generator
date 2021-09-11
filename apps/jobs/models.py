@@ -20,9 +20,9 @@ class Manager(models.Model):
 
 
 class Worker(models.Model):
-    STATUS_EMPLOYED = "Employed"
-    STATUS_UNEMPLOYED = "Unemployed"
-    STATUS = ((STATUS_EMPLOYED, "Employed"), (STATUS_UNEMPLOYED, "Unemployed"))
+    STATUS_EMPLOYED = "EMPLOYED"
+    STATUS_UNEMPLOYED = "UNEMPLOYED"
+    STATUS = ((STATUS_EMPLOYED, "employed"), (STATUS_UNEMPLOYED, "unemployed"))
 
     name = models.CharField(max_length=50, unique=True)
     status = models.CharField(
@@ -40,9 +40,9 @@ class Worker(models.Model):
 
 class Position(models.Model):
     RELATED_NAME = "positions"
-    STATUS_ACTIVE = "Active"
-    STATUS_BUSY = "Busy"
-    STATUS = ((STATUS_ACTIVE, "Active"), (STATUS_BUSY, "Busy"))
+    STATUS_ACTIVE = "ACTIVE"
+    STATUS_BUSY = "BUSY"
+    STATUS = ((STATUS_ACTIVE, "active"), (STATUS_BUSY, "busy"))
 
     name = models.CharField(max_length=50)
     workers_num = models.PositiveSmallIntegerField(
@@ -66,13 +66,13 @@ class Position(models.Model):
 
 class Offer(models.Model):
     RELATED_NAME = "offers"
-    STATUS_ACCEPTED = "Accepted"
-    STATUS_DECLINED = "Declined"
-    STATUS_PENDING = "Pending"
+    STATUS_ACCEPTED = "ACCEPTED"
+    STATUS_DECLINED = "DECLINED"
+    STATUS_PENDING = "PENDING"
     STATUS = (
-        (STATUS_ACCEPTED, "Accepted"),
-        (STATUS_DECLINED, "Declined"),
-        (STATUS_PENDING, "Pending"),
+        (STATUS_ACCEPTED, "accepted"),
+        (STATUS_DECLINED, "declined"),
+        (STATUS_PENDING, "pending"),
     )
 
     name = models.CharField(max_length=50)
