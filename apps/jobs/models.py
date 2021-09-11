@@ -22,7 +22,10 @@ class Manager(models.Model):
 class Worker(models.Model):
     STATUS_EMPLOYED = "EMPLOYED"
     STATUS_UNEMPLOYED = "UNEMPLOYED"
-    STATUSES = ((STATUS_EMPLOYED, "employed"), (STATUS_UNEMPLOYED, "unemployed"))
+    STATUSES = (
+        (STATUS_EMPLOYED, "employed"),
+        (STATUS_UNEMPLOYED, "unemployed"),
+    )
 
     name = models.CharField(max_length=50, unique=True)
     status = models.CharField(
