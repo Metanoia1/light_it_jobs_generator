@@ -22,11 +22,11 @@ class Manager(models.Model):
 class Worker(models.Model):
     STATUS_EMPLOYED = "EMPLOYED"
     STATUS_UNEMPLOYED = "UNEMPLOYED"
-    STATUS = ((STATUS_EMPLOYED, "employed"), (STATUS_UNEMPLOYED, "unemployed"))
+    STATUSES = ((STATUS_EMPLOYED, "employed"), (STATUS_UNEMPLOYED, "unemployed"))
 
     name = models.CharField(max_length=50, unique=True)
     status = models.CharField(
-        choices=STATUS, default=STATUS_UNEMPLOYED, max_length=50
+        choices=STATUSES, default=STATUS_UNEMPLOYED, max_length=50
     )
     skills = models.ManyToManyField(
         "Skill",
@@ -42,14 +42,14 @@ class Position(models.Model):
     RELATED_NAME = "positions"
     STATUS_ACTIVE = "ACTIVE"
     STATUS_BUSY = "BUSY"
-    STATUS = ((STATUS_ACTIVE, "active"), (STATUS_BUSY, "busy"))
+    STATUSES = ((STATUS_ACTIVE, "active"), (STATUS_BUSY, "busy"))
 
     name = models.CharField(max_length=50)
     workers_num = models.PositiveSmallIntegerField(
         default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
     )
     status = models.CharField(
-        choices=STATUS, default=STATUS_ACTIVE, max_length=50
+        choices=STATUSES, default=STATUS_ACTIVE, max_length=50
     )
     manager = models.ForeignKey(
         Manager, on_delete=models.CASCADE, related_name=RELATED_NAME
@@ -69,7 +69,7 @@ class Offer(models.Model):
     STATUS_ACCEPTED = "ACCEPTED"
     STATUS_DECLINED = "DECLINED"
     STATUS_PENDING = "PENDING"
-    STATUS = (
+    STATUSES = (
         (STATUS_ACCEPTED, "accepted"),
         (STATUS_DECLINED, "declined"),
         (STATUS_PENDING, "pending"),
@@ -77,7 +77,7 @@ class Offer(models.Model):
 
     name = models.CharField(max_length=50)
     status = models.CharField(
-        choices=STATUS, default=STATUS_PENDING, max_length=50
+        choices=STATUSES, default=STATUS_PENDING, max_length=50
     )
     position = models.ForeignKey(
         Position, on_delete=models.CASCADE, related_name=RELATED_NAME
