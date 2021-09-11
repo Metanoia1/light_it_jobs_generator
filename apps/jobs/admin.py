@@ -9,6 +9,7 @@ from .models import (
     Skill,
     WorkerSkill,
     PositionSkill,
+    TimeSheet,
 )
 
 
@@ -36,5 +37,6 @@ admin.site.register(Worker, WorkerAdmin)
 admin.site.register(Position, PositionAdmin)
 admin.site.register(Offer)
 admin.site.register(Skill)
+admin.site.register(TimeSheet)
 # admin.site.register(WorkerSkill)
 # admin.site.register(PositionSkill)

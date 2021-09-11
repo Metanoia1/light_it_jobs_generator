@@ -129,3 +129,21 @@ class PositionSkill(LevelAbstractModel):
     skill = models.ForeignKey(
         Skill, on_delete=models.CASCADE, related_name=RELATED_NAME
     )
+
+
+class TimeSheet(models.Model):
+    working_day = models.DateField()
+    work_start = models.TimeField()
+    work_end = models.TimeField()
+    break_start = models.TimeField()
+    break_end = models.TimeField()
+    worker = models.ForeignKey(
+        Worker, on_delete=models.CASCADE, related_name="timesheets"
+    )
+
+    def __str__(self):
+        return (
+            f"TimeSheet of {self.worker.name}"
+            if self.worker.name
+            else "TimeSheet of Anonymous Worker"
+        )
