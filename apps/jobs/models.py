@@ -10,9 +10,20 @@ class Company(models.Model):
 
 
 class Manager(models.Model):
+    STATUS_PENDING = "PENDING"
+    STATUS_ACCEPTED = "ACCEPTED"
+    STATUS_DECLINED = "DECLINED"
+    STATUSES = (
+        (STATUS_PENDING, "pending"),
+        (STATUS_ACCEPTED, "accepted"),
+        (STATUS_DECLINED, "declined"),
+    )
     name = models.CharField(max_length=50, unique=True)
     company = models.ForeignKey(
         Company, on_delete=models.CASCADE, related_name="managers"
+    )
+    status = models.CharField(
+        choices=STATUSES, default=STATUS_PENDING, max_length=50
     )
 
     def __str__(self):
