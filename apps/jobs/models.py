@@ -33,6 +33,7 @@ class Manager(UserAbstractModel):
 
 
 class Worker(UserAbstractModel):
+    RELATED_NAME = "workers"
     STATUS_EMPLOYED = "EMPLOYED"
     STATUS_UNEMPLOYED = "UNEMPLOYED"
     STATUSES = (
@@ -44,10 +45,17 @@ class Worker(UserAbstractModel):
     status = models.CharField(
         choices=STATUSES, default=STATUS_UNEMPLOYED, max_length=50
     )
+    position = models.ForeignKey(
+        "Position",
+        on_delete=models.CASCADE,
+        related_name=RELATED_NAME,
+        blank=True,
+        null=True,
+    )
     skills = models.ManyToManyField(
         "Skill",
         through="WorkerSkill",
-        related_name="workers",
+        related_name=RELATED_NAME,
     )
 
     def __str__(self):
