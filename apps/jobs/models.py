@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+from apps.users.models import UserAbstractModel
+
 
 class Company(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -9,7 +11,7 @@ class Company(models.Model):
         return self.name
 
 
-class Manager(models.Model):
+class Manager(UserAbstractModel):
     STATUS_PENDING = "PENDING"
     STATUS_ACCEPTED = "ACCEPTED"
     STATUS_DECLINED = "DECLINED"
@@ -19,18 +21,18 @@ class Manager(models.Model):
         (STATUS_DECLINED, "declined"),
     )
     name = models.CharField(max_length=50, unique=True)
-    company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, related_name="managers"
-    )
     status = models.CharField(
         choices=STATUSES, default=STATUS_PENDING, max_length=50
+    )
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, related_name="managers"
     )
 
     def __str__(self):
         return self.name
 
 
-class Worker(models.Model):
+class Worker(UserAbstractModel):
     STATUS_EMPLOYED = "EMPLOYED"
     STATUS_UNEMPLOYED = "UNEMPLOYED"
     STATUSES = (
@@ -52,6 +54,15 @@ class Worker(models.Model):
         return self.name
 
 
+class Skill(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    rate = models.DecimalField(max_digits=5, decimal_places=2)
+    level_rate = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def __str__(self):
+        return self.name
+
+
 class Position(models.Model):
     RELATED_NAME = "positions"
     STATUS_ACTIVE = "ACTIVE"
@@ -59,17 +70,17 @@ class Position(models.Model):
     STATUSES = ((STATUS_ACTIVE, "active"), (STATUS_BUSY, "busy"))
 
     name = models.CharField(max_length=50)
-    workers_num = models.PositiveSmallIntegerField(
-        default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
-    )
     status = models.CharField(
         choices=STATUSES, default=STATUS_ACTIVE, max_length=50
+    )
+    workers_num = models.PositiveSmallIntegerField(
+        default=1, validators=[MinValueValidator(1), MaxValueValidator(100)]
     )
     manager = models.ForeignKey(
         Manager, on_delete=models.CASCADE, related_name=RELATED_NAME
     )
     skills = models.ManyToManyField(
-        "Skill",
+        Skill,
         through="PositionSkill",
         related_name=RELATED_NAME,
     )
@@ -107,13 +118,35 @@ class Offer(models.Model):
         return self.name
 
 
-class Skill(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    rate = models.DecimalField(max_digits=5, decimal_places=2)
-    level_rate = models.DecimalField(max_digits=5, decimal_places=2)
+class TimeSheet(models.Model):
+    STATUS_PENDING = "PENDING"
+    STATUS_ACCEPTED = "ACCEPTED"
+    STATUS_DECLINED = "DECLINED"
+    STATUS_CHANGED = "CHANGED"
+    STATUSES = (
+        (STATUS_PENDING, "pending"),
+        (STATUS_ACCEPTED, "accepted"),
+        (STATUS_DECLINED, "declined"),
+        (STATUS_CHANGED, "changed"),
+    )
+    status = models.CharField(
+        choices=STATUSES, default=STATUS_PENDING, max_length=50
+    )
+    working_day = models.DateField()
+    work_start = models.TimeField()
+    work_end = models.TimeField()
+    break_start = models.TimeField()
+    break_end = models.TimeField()
+    worker = models.ForeignKey(
+        Worker, on_delete=models.CASCADE, related_name="timesheets"
+    )
 
     def __str__(self):
-        return self.name
+        return (
+            f"TimeSheet of {self.worker.name}"
+            if self.worker.name
+            else "TimeSheet of Anonymous Worker"
+        )
 
 
 class LevelAbstractModel(models.Model):
@@ -143,34 +176,3 @@ class PositionSkill(LevelAbstractModel):
     skill = models.ForeignKey(
         Skill, on_delete=models.CASCADE, related_name=RELATED_NAME
     )
-
-
-class TimeSheet(models.Model):
-    STATUS_PENDING = "PENDING"
-    STATUS_ACCEPTED = "ACCEPTED"
-    STATUS_DECLINED = "DECLINED"
-    STATUS_CHANGED = "CHANGED"
-    STATUSES = (
-        (STATUS_PENDING, "pending"),
-        (STATUS_ACCEPTED, "accepted"),
-        (STATUS_DECLINED, "declined"),
-        (STATUS_CHANGED, "changed"),
-    )
-    working_day = models.DateField()
-    work_start = models.TimeField()
-    work_end = models.TimeField()
-    break_start = models.TimeField()
-    break_end = models.TimeField()
-    worker = models.ForeignKey(
-        Worker, on_delete=models.CASCADE, related_name="timesheets"
-    )
-    status = models.CharField(
-        choices=STATUSES, default=STATUS_PENDING, max_length=50
-    )
-
-    def __str__(self):
-        return (
-            f"TimeSheet of {self.worker.name}"
-            if self.worker.name
-            else "TimeSheet of Anonymous Worker"
-        )
